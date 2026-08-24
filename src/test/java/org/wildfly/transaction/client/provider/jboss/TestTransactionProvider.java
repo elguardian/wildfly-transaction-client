@@ -40,13 +40,13 @@ public class TestTransactionProvider extends JBossLocalTransactionProvider {
 
     public TestTransactionProvider(final int staleTransactionTime,
                                    final Path xaRecoveryPath) {
-        super(new TestExtendedJBossXATerminator(), staleTransactionTime, new TestTransactionManager(), new TestXAResourceRecoveryRegistry(), xaRecoveryPath);
+        super(new TestExtendedJBossXATerminator(), staleTransactionTime, new TestTransactionManager(), new TestXAResourceRecoveryRegistry(), xaRecoveryPath, null);
     }
 
     public TestTransactionProvider(final int staleTransactionTime,
                                    final Path xaRecoveryPath,
                                    final XAResourceRecoveryRegistry xaResourceRecoveryRegistry) {
-        super(new TestExtendedJBossXATerminator(), staleTransactionTime, new TestTransactionManager(), xaResourceRecoveryRegistry, xaRecoveryPath);
+        super(new TestExtendedJBossXATerminator(), staleTransactionTime, new TestTransactionManager(), xaResourceRecoveryRegistry, xaRecoveryPath, null);
     }
 
     @Override

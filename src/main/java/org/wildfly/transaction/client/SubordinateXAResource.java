@@ -59,11 +59,17 @@ final class SubordinateXAResource implements XAResource, XARecoverable, Serializ
 
     private final AtomicInteger stateRef = new AtomicInteger(0);
 
-    SubordinateXAResource(final URI location, final String parentName, XAResourceRegistry recoveryRegistry) {
+    private SubordinateXAResource(final URI location, final String parentName,
+                                   final XAResourceRegistry recoveryRegistry,
+                                   final AuthenticationContext authenticationContext) {
         this.location = location;
         this.parentName = parentName;
         this.resourceRegistry = recoveryRegistry;
-        this.authenticationContext = AuthenticationContext.captureCurrent();
+        this.authenticationContext = authenticationContext;
+    }
+
+    SubordinateXAResource(final URI location, final String parentName, XAResourceRegistry recoveryRegistry) {
+        this(location, parentName, recoveryRegistry, AuthenticationContext.captureCurrent());
     }
 
     SubordinateXAResource(final URI location, final String parentName, Xid xid, final int flags, XAResourceRegistry recoveryRegistry) {
@@ -72,12 +78,22 @@ final class SubordinateXAResource implements XAResource, XARecoverable, Serializ
         stateRef.set(flags);
     }
 
-    SubordinateXAResource(final URI location, final int flags, final String parentName) {
-        this.location = location;
-        this.parentName = parentName;
+    SubordinateXAResource(final URI location, final String parentName, Xid xid, final int flags,
+                          XAResourceRegistry recoveryRegistry, final AuthenticationContext authenticationContext) {
+        this(location, parentName, recoveryRegistry, authenticationContext);
+        this.xid = xid;
         stateRef.set(flags);
-        this.resourceRegistry = null;
-        this.authenticationContext = AuthenticationContext.captureCurrent();
+    }
+
+    SubordinateXAResource(final URI location, final int flags, final String parentName) {
+        this(location, parentName, null, AuthenticationContext.captureCurrent());
+        stateRef.set(flags);
+    }
+
+    SubordinateXAResource(final URI location, final int flags, final String parentName,
+                          final AuthenticationContext authenticationContext) {
+        this(location, parentName, null, authenticationContext != null ? authenticationContext : AuthenticationContext.captureCurrent());
+        stateRef.set(flags);
     }
 
     Xid getXid() {
